@@ -31,13 +31,11 @@ class PdfBookScreen extends StatefulWidget {
   State<PdfBookScreen> createState() => _PdfBookScreenState();
 }
 
-class _PdfBookScreenState extends State<PdfBookScreen>
-    with AutomaticKeepAliveClientMixin {
+class _PdfBookScreenState extends State<PdfBookScreen> with AutomaticKeepAliveClientMixin {
   @override
   bool get wantKeepAlive => true;
 
-  late final textSearcher = PdfTextSearcher(widget.tab.pdfViewerController)
-    ..addListener(_update);
+  late final textSearcher = PdfTextSearcher(widget.tab.pdfViewerController)..addListener(_update);
 
   void _update() {
     if (mounted) {
@@ -54,8 +52,7 @@ class _PdfBookScreenState extends State<PdfBookScreen>
         widget.tab.pageNumber = widget.tab.pdfViewerController.pageNumber!;
         () async {
           widget.tab.currentTitle.value = await refFromPageNumber(
-              widget.tab.pageNumber =
-                  widget.tab.pdfViewerController.pageNumber ?? 1,
+              widget.tab.pageNumber = widget.tab.pdfViewerController.pageNumber ?? 1,
               widget.tab.outline.value);
         }();
       }
@@ -111,252 +108,100 @@ class _PdfBookScreenState extends State<PdfBookScreen>
                         .addBookmark(
                             ref: '${widget.tab.title} עמוד $index',
                             book: widget.tab.book,
-                            index: index);
-                // notify user
-                if (mounted) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                      content: Text(bookmarkAdded
-                          ? 'הסימניה נוספה בהצלחה'
-                          : 'הסימניה כבר קיימת'),
-                    ),
-                  );
-                }
+                        );
               },
             ),
-            IconButton(
-              icon: const Icon(
-                Icons.zoom_in,
-              ),
-              tooltip: 'הגדל',
-              onPressed: () => widget.tab.pdfViewerController.zoomUp(),
-            ),
-            IconButton(
-              icon: const Icon(Icons.zoom_out),
-              tooltip: 'הקטן',
-              onPressed: () => widget.tab.pdfViewerController.zoomDown(),
-            ),
-            if (wideScreen)
-              IconButton(
-                icon: const Icon(Icons.first_page),
-                tooltip: 'תחילת הספר',
-                onPressed: () =>
-                    widget.tab.pdfViewerController.goToPage(pageNumber: 1),
-              ),
-            IconButton(
-                icon: const Icon(Icons.chevron_left),
-                tooltip: 'הקודם',
-                onPressed: () => widget.tab.pdfViewerController.isReady
-                    ? widget.tab.pdfViewerController.goToPage(
-                        pageNumber: max(
-                            widget.tab.pdfViewerController.pageNumber! - 1, 1))
-                    : null),
-            PageNumberDisplay(controller: widget.tab.pdfViewerController),
-            IconButton(
-              onPressed: () => widget.tab.pdfViewerController.isReady
-                  ? widget.tab.pdfViewerController.goToPage(
-                      pageNumber: min(
-                          widget.tab.pdfViewerController.pageNumber! + 1,
-                          widget.tab.pdfViewerController.pages.length))
-                  : null,
-              icon: const Icon(Icons.chevron_right),
-              tooltip: 'הבא',
-            ),
-            if (wideScreen)
-              IconButton(
-                icon: const Icon(Icons.last_page),
-                tooltip: 'סוף הספר',
-                onPressed: () => widget.tab.pdfViewerController.goToPage(
-                    pageNumber: widget.tab.pdfViewerController.pages.length),
-              ),
-            IconButton(
-                icon: const Icon(Icons.share),
-                tooltip: 'שיתוף',
-                onPressed: () async {
-                  await Printing.sharePdf(
-                    bytes: File(widget.tab.book.path).readAsBytesSync(),
-                  );
-                }),
           ],
         ),
-        body: ColorFiltered(
-          colorFilter: ColorFilter.mode(
-              Colors.white,
-              Provider.of<SettingsBloc>(context, listen: true).state.isDarkMode
-                  ? BlendMode.difference
-                  : BlendMode.dst),
-          child: PdfViewer.file(
-            widget.tab.book.path,
-            initialPageNumber: widget.tab.pageNumber,
-            passwordProvider: () => passwordDialog(context),
-            controller: widget.tab.pdfViewerController,
-            params: PdfViewerParams(
-              enableTextSelection: true,
-              maxScale: 10,
-              onInteractionStart: (_) {
-                if (!widget.tab.pinLeftPane.value) {
-                  widget.tab.showLeftPane.value = false;
-                }
-              },
-              viewerOverlayBuilder: (context, size, handleLinkTap) => [
-                PdfViewerScrollThumb(
-                  controller: widget.tab.pdfViewerController,
-                  orientation: ScrollbarOrientation.right,
-                  thumbSize: const Size(40, 25),
-                  thumbBuilder: (context, thumbSize, pageNumber, controller) =>
-                      Container(
-                    color: Colors.black,
-                    child: Center(
-                      child: Text(
-                        pageNumber.toString(),
-                        style: const TextStyle(color: Colors.white),
+        body: LayoutBuilder(
+          builder: (context, constraints) {
+            return Column(
+              children: [
+                DefaultTabController(
+                  length: 3,
+                  child: Column(
+                    children: [
+                      TabBar(
+                        tabs: [
+                          Tab(
+                            child: MouseRegion(
+                              onEnter: (_) => setState(() {}),
+                              onExit: (_) => setState(() {}),
+                              child: Container(
+                                decoration: BoxDecoration(
+                                  color: Colors.transparent,
+                                  borderRadius: BorderRadius.circular(5),
+                                ),
+                                child: Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: Text(
+                                    'ניווט',
+                                    style: TextStyle(color: Colors.black),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                          Tab(
+                            child: MouseRegion(
+                              onEnter: (_) => setState(() {}),
+                              onExit: (_) => setState(() {}),
+                              child: Container(
+                                decoration: BoxDecoration(
+                                  color: Colors.transparent,
+                                  borderRadius: BorderRadius.circular(5),
+                                ),
+                                child: Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: Text(
+                                    'חיפוש',
+                                    style: TextStyle(color: Colors.black),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                          Tab(
+                            child: MouseRegion(
+                              onEnter: (_) => setState(() {}),
+                              onExit: (_) => setState(() {}),
+                              child: Container(
+                                decoration: BoxDecoration(
+                                  color: Colors.transparent,
+                                  borderRadius: BorderRadius.circular(5),
+                                ),
+                                child: Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: Text(
+                                    'דפים',
+                                    style: TextStyle(color: Colors.black),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
                       ),
-                    ),
+                      Expanded(
+                        child: TabBarView(
+                          children: [
+                            Center(child: Text('ניווט תוכן')),
+                            Center(child: Text('חיפוש טקסט')),
+                            Center(child: Text('תצוגת דפים')),
+                          ],
+                        ),
+                      ),
+                    ],
                   ),
                 ),
-                PdfViewerScrollThumb(
-                  controller: widget.tab.pdfViewerController,
-                  orientation: ScrollbarOrientation.bottom,
-                  thumbSize: const Size(80, 5),
-                  thumbBuilder: (context, thumbSize, pageNumber, controller) =>
-                      Container(
-                    decoration: BoxDecoration(
-                      color: Colors.grey[300],
-                      borderRadius: BorderRadius.circular(3),
-                    ),
-                  ),
-                ),
-                _buildLeftPane(),
               ],
-              loadingBannerBuilder: (context, bytesDownloaded, totalBytes) =>
-                  Center(
-                child: CircularProgressIndicator(
-                  value:
-                      totalBytes != null ? bytesDownloaded / totalBytes : null,
-                  backgroundColor: Colors.grey,
-                ),
-              ),
-              linkWidgetBuilder: (context, link, size) => Material(
-                color: Colors.transparent,
-                child: InkWell(
-                  onTap: () async {
-                    if (link.url != null) {
-                      navigateToUrl(link.url!);
-                    } else if (link.dest != null) {
-                      widget.tab.pdfViewerController.goToDest(link.dest);
-                    }
-                  },
-                  hoverColor: Colors.blue.withOpacity(0.2),
-                ),
-              ),
-              pagePaintCallbacks: [textSearcher.pageTextMatchPaintCallback],
-              onDocumentChanged: (document) async {
-                if (document == null) {
-                  widget.tab.documentRef.value = null;
-                  widget.tab.outline.value = null;
-                }
-              },
-              onViewerReady: (document, controller) async {
-                widget.tab.documentRef.value = controller.documentRef;
-                widget.tab.outline.value = await document.loadOutline();
-                () async {
-                  widget.tab.currentTitle.value = await refFromPageNumber(
-                      widget.tab.pageNumber =
-                          widget.tab.pdfViewerController.pageNumber ?? 1,
-                      widget.tab.outline.value);
-                }();
-                if (mounted) {
-                  widget.tab.showLeftPane.value = true;
-                }
-              },
-            ),
-          ),
+            );
+          },
         ),
       );
     });
   }
-
-  AnimatedSize _buildLeftPane() {
-    return AnimatedSize(
-      duration: const Duration(milliseconds: 300),
-      child: ValueListenableBuilder(
-        valueListenable: widget.tab.showLeftPane,
-        builder: (context, showLeftPane, child) => SizedBox(
-          width: showLeftPane ? 300 : 0,
-          child: child!,
-        ),
-        child: DefaultTabController(
-          length: 3,
-          child: Container(
-            color: Theme.of(context).colorScheme.surface,
-            child: Padding(
-              padding: const EdgeInsets.fromLTRB(1, 0, 4, 0),
-              child: Column(
-                children: [
-                  Row(
-                    children: [
-                      const Expanded(
-                        child: ClipRect(
-                          child: TabBar(
-                            tabs: [
-                              Tab(text: 'ניווט'),
-                              Tab(text: 'חיפוש'),
-                              Tab(text: 'דפים'),
-                            ],
-                          ),
-                        ),
-                      ),
-                      ValueListenableBuilder(
-                        valueListenable: widget.tab.pinLeftPane,
-                        builder: (context, pinLeftPanel, child) =>
-                            MediaQuery.of(context).size.width < 600
-                                ? const SizedBox.shrink()
-                                : IconButton(
-                                    onPressed: () {
-                                      widget.tab.pinLeftPane.value =
-                                          !widget.tab.pinLeftPane.value;
-                                    },
-                                    icon: const Icon(Icons.push_pin),
-                                    isSelected: pinLeftPanel,
-                                  ),
-                      ),
-                    ],
-                  ),
-                  Expanded(
-                    child: TabBarView(
-                      children: [
-                        ValueListenableBuilder(
-                          valueListenable: widget.tab.outline,
-                          builder: (context, outline, child) => OutlineView(
-                            outline: outline,
-                            controller: widget.tab.pdfViewerController,
-                          ),
-                        ),
-                        ValueListenableBuilder(
-                          valueListenable: widget.tab.documentRef,
-                          builder: (context, documentRef, child) => child!,
-                          child: PdfBookSearchView(
-                            textSearcher: textSearcher,
-                          ),
-                        ),
-                        ValueListenableBuilder(
-                          valueListenable: widget.tab.documentRef,
-                          builder: (context, documentRef, child) => child!,
-                          child: ThumbnailsView(
-                              documentRef: widget.tab.documentRef.value,
-                              controller: widget.tab.pdfViewerController),
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-        ),
-      ),
-    );
-  }
+}
 
   Future<void> navigateToUrl(Uri url) async {
     if (await shouldOpenUrl(context, url)) {
